@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+option go_package = "com/lightbend/gsa/parentalcontrol/childdevice/persistence;persistence";
+package com.lightbend.gsa.parentalcontrol.childdevice.persistence;
+
+import "akkaserverless/annotations.proto";
+
+option (akkaserverless.file).event_sourced_entity = {
+    name: "ChildDeviceEntity"
+    entity_type: "ChildDeviceEntity"
+    state: { type: "ChildDeviceState" }
+    event: { type: "ChildDeviceCreated" }
+    event: { type: "ChildDeviceDeleted" }
+    event: { type: "ParentAdded" }
+    event: { type: "ParentRemoved" }
+    event: { type: "ControlGeofenceAdded" }
+    event: { type: "ControlGeofenceUpdated" }
+    event: { type: "ControlGeofenceRemoved" }
+    event: { type: "GpsLocationAdded" }
+    event: { type: "GpsLocationOutsideOfControlGeofence" }
+    event: { type: "GpsLocationBackToControlGeofence" }
+    event: { type: "GpsLocationChangedControlGeofence" }
+
+};
+
+message ChildDeviceCreated {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message ChildDeviceDeleted {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message ParentAdded {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string parent_id = 2;
+}
+
+message ParentRemoved {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string parent_id = 2;
+}
+
+message ControlGeofenceAdded {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string geofence_polygon = 3;
+}
+message ControlGeofenceUpdated {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string geofence_polygon = 3;
+}
+message ControlGeofenceRemoved {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+}
+
+message GpsLocationAdded {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string gps_latitude = 3;
+    string gps_longitude = 4;
+    int64 timestamp = 5;
+}
+
+message GpsLocationChangedControlGeofence {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string old_geofence_id = 2;
+    string new_geofence_id = 3;
+    string gps_latitude = 4;
+    string gps_longitude = 5;
+    int64 timestamp = 6;
+}
+
+message GpsLocationOutsideOfControlGeofence {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string old_geofence_id = 2;
+    string gps_latitude = 3;
+    string gps_longitude = 4;
+    int64 timestamp = 5;
+}
+
+message GpsLocationBackToControlGeofence {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string gps_latitude = 3;
+    string gps_longitude = 4;
+    int64 timestamp = 5;
+}
+
+message ChildDeviceState {
+    repeated string parent_id = 1;
+    repeated ControlGeofenceState control_geofence = 2;
+    string current_geofence_id = 3;
+    string last_gps_latitude = 4;
+    string last_gps_longitude = 5;
+    int64 last_gps_timestamp = 6;
+}
+
+message ControlGeofenceState {
+    string geofence_id = 1;
+    string geofence_polygon = 2;
+}

@@ -1,0 +1,125 @@
+// This is the public API offered by your entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "akkaserverless/annotations.proto";
+import "google/api/annotations.proto";
+
+package com.lightbend.gsa.parentalcontrol.childdevice;
+
+option go_package = "com/lightbend/gsa/parentalcontrol/childdevice";
+option java_outer_classname = "PcChildDeviceApi";
+
+message CreateChildDeviceCommand {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message DeleteChildDeviceCommand {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message GetChildDeviceCommand {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+}
+
+message AddParentCommand {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string parent_id = 2;
+}
+
+message RemoveParentCommand {
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string parent_id = 2;
+}
+
+message AddControlGeofenceCommand{
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string geofence_polygon = 3;
+}
+message UpdateControlGeofenceCommand{
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+    string geofence_polygon = 3;
+}
+
+message RemoveControlGeofenceCommand{
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string geofence_id = 2;
+}
+
+message AddGpsLocationCommand{
+    string device_id = 1 [(akkaserverless.field).entity_key = true];
+    string gps_latitude = 2;
+    string gps_longitude = 3;
+    int64 timestamp = 4;
+}
+
+message ChildDevice{
+    repeated string parent_id = 1;
+    repeated ControlGeofence control_geofence = 2;
+    string current_geofence_id = 3;
+    string last_gps_latitude = 4;
+    string last_gps_longitude = 5;
+    int64 last_gps_timestamp = 6;
+}
+
+message ControlGeofence{
+    string geofence_id = 1;
+    string geofence_polygon = 2;
+}
+
+service ChildDeviceService {
+    option (akkaserverless.service).entity.type = ".persistence.ChildDeviceEntity";
+
+    rpc CreateChildDevice(CreateChildDeviceCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/parental-control/child-devices/{device_id}"
+            body: "*"
+        };
+    };
+    rpc DeleteChildDevice(DeleteChildDeviceCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            delete: "/parental-control/child-devices/{device_id}"
+        };
+    };
+    rpc GetChildDevice(GetChildDeviceCommand) returns (ChildDevice){
+        option (google.api.http) = {
+            get: "/parental-control/child-devices/{device_id}"
+        };
+    };
+    rpc AddParentDevice(AddParentCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/parental-control/child-devices/{device_id}/parents/{parent_id}"
+            body: "*"
+        };
+    };
+    rpc RemoveParent(RemoveParentCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            delete: "/parental-control/child-devices/{device_id}/parents/{parent_id}"
+        };
+    };
+    rpc AddControlGeofence(AddControlGeofenceCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/parental-control/child-devices/{device_id}/geofences/{geofence_id}"
+            body: "*"
+        };
+    };
+    rpc UpdateControlGeofence(UpdateControlGeofenceCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            put: "/parental-control/child-devices/{device_id}/geofences/{geofence_id}"
+            body: "*"
+        };
+    };
+    rpc RemoveControlGeofence(RemoveControlGeofenceCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            delete: "/parental-control/child-devices/{device_id}/geofences/{geofence_id}"
+        };
+    };
+    rpc AddGpsLocation(AddGpsLocationCommand) returns (google.protobuf.Empty){
+        option (google.api.http) = {
+            post: "/parental-control/child-devices/{device_id}/locations"
+            body: "*"
+        };
+    };
+}
