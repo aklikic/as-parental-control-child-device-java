@@ -12,7 +12,7 @@ service PublishParentInfoService {
   rpc PublishParentAdded(com.lightbend.gsa.parentalcontrol.childdevice.persistence.ParentAdded) returns (com.lightbend.gsa.parentalcontrol.childdevice.persistence.ParentAdded) {
     option (akkaserverless.method).eventing = {
       in: {
-        event_log: "ChildDeviceEntity";
+        event_sourced_entity: "ChildDeviceEntity";
       }
       out: {
         topic: "pc-childdevice-parent";
@@ -23,7 +23,7 @@ service PublishParentInfoService {
   rpc PublishParentRemoved(com.lightbend.gsa.parentalcontrol.childdevice.persistence.ParentRemoved) returns (com.lightbend.gsa.parentalcontrol.childdevice.persistence.ParentRemoved) {
     option (akkaserverless.method).eventing = {
       in: {
-        event_log: "ChildDeviceEntity";
+        event_sourced_entity: "ChildDeviceEntity";
       }
       out: {
         topic: "pc-childdevice-parent";
@@ -34,7 +34,7 @@ service PublishParentInfoService {
   // handle other events which are not managed above
   rpc CatchOthers(google.protobuf.Any) returns (google.protobuf.Empty) {
     option (akkaserverless.method).eventing.in = {
-      event_log:  "ChildDeviceEntity"
+      event_sourced_entity:  "ChildDeviceEntity"
     };
   }
 

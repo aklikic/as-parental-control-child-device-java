@@ -1,8 +1,6 @@
 package com.lightbend.gsa.parentalcontrol.childdevice;
 
 import com.akkaserverless.javasdk.action.Action;
-import com.akkaserverless.javasdk.action.ActionContext;
-import com.akkaserverless.javasdk.action.ActionReply;
 import com.akkaserverless.javasdk.action.Handler;
 import com.google.protobuf.Any;
 import com.google.protobuf.Empty;
